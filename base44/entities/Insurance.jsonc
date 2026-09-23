@@ -1,0 +1,88 @@
+{
+  "name": "Insurance",
+  "type": "object",
+  "properties": {
+    "vehicle_id": {
+      "type": "string",
+      "title": "Ve\u00edculo",
+      "relatedEntity": "Vehicle"
+    },
+    "insurer": {
+      "type": "string",
+      "title": "Seguradora"
+    },
+    "policy_number": {
+      "type": "string",
+      "title": "N\u00ba da Ap\u00f3lice"
+    },
+    "agent_name": {
+      "type": "string",
+      "title": "Agente"
+    },
+    "agent_phone": {
+      "type": "string",
+      "title": "Contacto do Agente"
+    },
+    "start_date": {
+      "type": "string",
+      "format": "date",
+      "title": "In\u00edcio"
+    },
+    "end_date": {
+      "type": "string",
+      "format": "date",
+      "title": "Termo"
+    },
+    "premium_amount": {
+      "type": "number",
+      "title": "Pr\u00e9mio Anual (\u20ac)"
+    },
+    "coverage_type": {
+      "type": "string",
+      "title": "Cobertura",
+      "enum": [
+        "Responsabilidade Civil",
+        "Multirriscos",
+        "Todos os Riscos",
+        "Outro"
+      ],
+      "default": "Responsabilidade Civil"
+    },
+    "green_card_url": {
+      "type": "string",
+      "title": "Carta Verde",
+      "format": "file_url"
+    },
+    "notes": {
+      "type": "string",
+      "title": "Notas"
+    },
+    "is_active": {
+      "type": "boolean",
+      "title": "Vigente",
+      "default": true
+    }
+  },
+  "required": [
+    "vehicle_id",
+    "insurer",
+    "policy_number",
+    "start_date",
+    "end_date",
+    "premium_amount"
+  ],
+  "rls": {
+    "create": {
+      "created_by_id": "{{user.id}}"
+    },
+    "read": {
+      "created_by_id": "{{user.id}}"
+    },
+    "update": {
+      "created_by_id": "{{user.id}}"
+    },
+    "delete": {
+      "created_by_id": "{{user.id}}"
+    }
+  }
+}

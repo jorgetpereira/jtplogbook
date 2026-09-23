@@ -1,0 +1,44 @@
+{
+  "name": "Pagamento Mensal de Cr\u00e9dito",
+  "description": "Cria automaticamente um registo de cr\u00e9dito mensal no dia 27 de cada m\u00eas para ve\u00edculos com empr\u00e9stimo ativo, at\u00e9 o saldo chegar a zero.",
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "scheduled",
+      "events": [],
+      "schedule_mode": "recurring",
+      "cron_expression": "0 8 27 * *",
+      "one_time_date": null,
+      "timezone": "UTC",
+      "interval_value": null,
+      "interval_unit": null,
+      "interval_anchor": null,
+      "ends_type": "never",
+      "ends_on_date": null,
+      "ends_after_count": null
+    }
+  },
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "pagamento_mensal_de_cr_dito",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "run_function": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "createMonthlyLoanPayment",
+            "args": {}
+          },
+          "then": "end"
+        }
+      }
+    ]
+  },
+  "x-base44-migrated-from-automation": {
+    "legacy_payload_function": "createMonthlyLoanPayment"
+  }
+}

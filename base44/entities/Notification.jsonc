@@ -1,0 +1,70 @@
+{
+  "name": "Notification",
+  "type": "object",
+  "properties": {
+    "vehicle_id": {
+      "type": "string",
+      "title": "Ve\u00edculo",
+      "relatedEntity": "Vehicle"
+    },
+    "title": {
+      "type": "string",
+      "title": "T\u00edtulo"
+    },
+    "message": {
+      "type": "string",
+      "title": "Mensagem"
+    },
+    "type": {
+      "type": "string",
+      "title": "Tipo",
+      "enum": [
+        "Revis\u00e3o",
+        "Seguro",
+        "Inspe\u00e7\u00e3o",
+        "IUC",
+        "Pneus",
+        "Carta de Condu\u00e7\u00e3o",
+        "Outro"
+      ]
+    },
+    "due_date": {
+      "type": "string",
+      "format": "date",
+      "title": "Data Limite"
+    },
+    "is_read": {
+      "type": "boolean",
+      "title": "Lida",
+      "default": false
+    },
+    "is_completed": {
+      "type": "boolean",
+      "title": "Conclu\u00edda",
+      "default": false
+    },
+    "calendar_event_id": {
+      "type": "string",
+      "title": "ID do Evento no Google Calendar"
+    }
+  },
+  "required": [
+    "title",
+    "type",
+    "due_date"
+  ],
+  "rls": {
+    "create": {
+      "created_by_id": "{{user.id}}"
+    },
+    "read": {
+      "created_by_id": "{{user.id}}"
+    },
+    "update": {
+      "created_by_id": "{{user.id}}"
+    },
+    "delete": {
+      "created_by_id": "{{user.id}}"
+    }
+  }
+}

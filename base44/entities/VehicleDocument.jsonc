@@ -1,0 +1,65 @@
+{
+  "name": "VehicleDocument",
+  "type": "object",
+  "properties": {
+    "vehicle_id": {
+      "type": "string",
+      "title": "Ve\u00edculo",
+      "relatedEntity": "Vehicle"
+    },
+    "expense_id": {
+      "type": "string",
+      "title": "Despesa associada"
+    },
+    "title": {
+      "type": "string",
+      "title": "T\u00edtulo"
+    },
+    "category": {
+      "type": "string",
+      "title": "Categoria",
+      "enum": [
+        "Fatura",
+        "Manual",
+        "Seguro",
+        "Inspe\u00e7\u00e3o",
+        "Garantia",
+        "Contrato",
+        "Outro"
+      ]
+    },
+    "file_url": {
+      "type": "string",
+      "title": "Ficheiro",
+      "format": "file_url"
+    },
+    "date": {
+      "type": "string",
+      "format": "date",
+      "title": "Data"
+    },
+    "notes": {
+      "type": "string",
+      "title": "Notas"
+    }
+  },
+  "required": [
+    "vehicle_id",
+    "title",
+    "category"
+  ],
+  "rls": {
+    "create": {
+      "created_by_id": "{{user.id}}"
+    },
+    "read": {
+      "created_by_id": "{{user.id}}"
+    },
+    "update": {
+      "created_by_id": "{{user.id}}"
+    },
+    "delete": {
+      "created_by_id": "{{user.id}}"
+    }
+  }
+}

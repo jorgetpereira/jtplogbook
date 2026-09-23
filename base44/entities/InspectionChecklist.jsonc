@@ -1,0 +1,72 @@
+{
+  "name": "InspectionChecklist",
+  "type": "object",
+  "properties": {
+    "vehicle_id": {
+      "type": "string",
+      "title": "Ve\u00edculo",
+      "relatedEntity": "Vehicle"
+    },
+    "date": {
+      "type": "string",
+      "format": "date",
+      "title": "Data"
+    },
+    "odometer": {
+      "type": "number",
+      "title": "Od\u00f3metro (km)"
+    },
+    "overall_status": {
+      "type": "string",
+      "title": "Estado Geral",
+      "enum": [
+        "OK",
+        "Aten\u00e7\u00e3o",
+        "Cr\u00edtico"
+      ],
+      "default": "OK"
+    },
+    "items": {
+      "type": "array",
+      "title": "Itens Verificados",
+      "items": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string"
+          },
+          "checked": {
+            "type": "boolean",
+            "default": true
+          },
+          "notes": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "notes": {
+      "type": "string",
+      "title": "Notas Gerais"
+    }
+  },
+  "required": [
+    "vehicle_id",
+    "date",
+    "overall_status"
+  ],
+  "rls": {
+    "create": {
+      "created_by_id": "{{user.id}}"
+    },
+    "read": {
+      "created_by_id": "{{user.id}}"
+    },
+    "update": {
+      "created_by_id": "{{user.id}}"
+    },
+    "delete": {
+      "created_by_id": "{{user.id}}"
+    }
+  }
+}

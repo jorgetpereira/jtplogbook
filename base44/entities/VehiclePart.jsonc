@@ -1,0 +1,97 @@
+{
+  "name": "VehiclePart",
+  "type": "object",
+  "properties": {
+    "vehicle_id": {
+      "type": "string",
+      "title": "Ve\u00edculo",
+      "relatedEntity": "Vehicle"
+    },
+    "expense_id": {
+      "type": "string",
+      "title": "Despesa associada"
+    },
+    "name": {
+      "type": "string",
+      "title": "Nome do Componente"
+    },
+    "category": {
+      "type": "string",
+      "title": "Categoria",
+      "enum": [
+        "Motor",
+        "Trav\u00f5es",
+        "Pneus",
+        "Suspens\u00e3o",
+        "El\u00e9trico",
+        "Transmiss\u00e3o",
+        "Filtros",
+        "Correia/Corrente",
+        "Ilumina\u00e7\u00e3o",
+        "Outro"
+      ]
+    },
+    "brand": {
+      "type": "string",
+      "title": "Marca"
+    },
+    "reference": {
+      "type": "string",
+      "title": "Refer\u00eancia"
+    },
+    "installation_date": {
+      "type": "string",
+      "format": "date",
+      "title": "Data de Instala\u00e7\u00e3o"
+    },
+    "installation_mileage": {
+      "type": "number",
+      "title": "km na Instala\u00e7\u00e3o"
+    },
+    "warranty_date": {
+      "type": "string",
+      "format": "date",
+      "title": "Garantia at\u00e9"
+    },
+    "next_replacement_date": {
+      "type": "string",
+      "format": "date",
+      "title": "Pr\u00f3xima Substitui\u00e7\u00e3o (data)"
+    },
+    "next_replacement_km": {
+      "type": "number",
+      "title": "Pr\u00f3xima Substitui\u00e7\u00e3o (km)"
+    },
+    "cost": {
+      "type": "number",
+      "title": "Custo (\u20ac)"
+    },
+    "supplier": {
+      "type": "string",
+      "title": "Fornecedor / Oficina"
+    },
+    "notes": {
+      "type": "string",
+      "title": "Notas"
+    }
+  },
+  "required": [
+    "vehicle_id",
+    "name",
+    "category"
+  ],
+  "rls": {
+    "create": {
+      "created_by_id": "{{user.id}}"
+    },
+    "read": {
+      "created_by_id": "{{user.id}}"
+    },
+    "update": {
+      "created_by_id": "{{user.id}}"
+    },
+    "delete": {
+      "created_by_id": "{{user.id}}"
+    }
+  }
+}

@@ -1,0 +1,96 @@
+{
+  "name": "VehicleIssue",
+  "type": "object",
+  "properties": {
+    "vehicle_id": {
+      "type": "string",
+      "title": "Ve\u00edculo",
+      "relatedEntity": "Vehicle"
+    },
+    "title": {
+      "type": "string",
+      "title": "T\u00edtulo"
+    },
+    "category": {
+      "type": "string",
+      "title": "Categoria",
+      "enum": [
+        "Motor",
+        "Trav\u00f5es",
+        "El\u00e9trico",
+        "Eletr\u00f3nica",
+        "Pneus",
+        "Suspens\u00e3o",
+        "Transmiss\u00e3o",
+        "Ar Condicionado",
+        "Outro"
+      ]
+    },
+    "maintenance_type": {
+      "type": "string",
+      "title": "Tipo de Manuten\u00e7\u00e3o",
+      "enum": [
+        "Corretiva",
+        "Preventiva"
+      ],
+      "default": "Corretiva"
+    },
+    "notes": {
+      "type": "string",
+      "title": "Notas"
+    },
+    "image_urls": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Imagens"
+    },
+    "status": {
+      "type": "string",
+      "title": "Estado",
+      "enum": [
+        "Aberto",
+        "Resolvido"
+      ],
+      "default": "Aberto"
+    },
+    "detected_date": {
+      "type": "string",
+      "format": "date",
+      "title": "Data de Dete\u00e7\u00e3o"
+    },
+    "odometer": {
+      "type": "number",
+      "title": "Od\u00f3metro (km)"
+    },
+    "resolved_date": {
+      "type": "string",
+      "format": "date",
+      "title": "Data de Resolu\u00e7\u00e3o"
+    },
+    "resolved_notes": {
+      "type": "string",
+      "title": "Notas da Repara\u00e7\u00e3o"
+    }
+  },
+  "required": [
+    "vehicle_id",
+    "title",
+    "category"
+  ],
+  "rls": {
+    "create": {
+      "created_by_id": "{{user.id}}"
+    },
+    "read": {
+      "created_by_id": "{{user.id}}"
+    },
+    "update": {
+      "created_by_id": "{{user.id}}"
+    },
+    "delete": {
+      "created_by_id": "{{user.id}}"
+    }
+  }
+}

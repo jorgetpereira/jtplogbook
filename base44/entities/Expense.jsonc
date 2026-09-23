@@ -1,0 +1,143 @@
+{
+  "name": "Expense",
+  "type": "object",
+  "properties": {
+    "vehicle_id": {
+      "type": "string",
+      "title": "Ve\u00edculo",
+      "relatedEntity": "Vehicle"
+    },
+    "category": {
+      "type": "string",
+      "title": "Categoria",
+      "enum": [
+        "Combust\u00edvel",
+        "Manuten\u00e7\u00e3o",
+        "Seguros",
+        "Empr\u00e9stimos"
+      ]
+    },
+    "sub_category": {
+      "type": "string",
+      "title": "Subcategoria",
+      "enum": [
+        "Gas\u00f3leo",
+        "Gasolina",
+        "Eletricidade",
+        "Revis\u00e3o",
+        "Pneus",
+        "Estacionamento",
+        "Multa",
+        "Repara\u00e7\u00e3o de Pe\u00e7a",
+        "Seguro",
+        "Cr\u00e9dito",
+        "Inspe\u00e7\u00e3o",
+        "Lavagem",
+        "Portagens",
+        "IUC",
+        "Outro"
+      ]
+    },
+    "amount": {
+      "type": "number",
+      "title": "Valor (\u20ac)"
+    },
+    "date": {
+      "type": "string",
+      "format": "date",
+      "title": "Data"
+    },
+    "mileage_at_expense": {
+      "type": "number",
+      "title": "Quilometragem (km)"
+    },
+    "liters": {
+      "type": "number",
+      "title": "Litros / kWh"
+    },
+    "price_per_unit": {
+      "type": "number",
+      "title": "Pre\u00e7o por Litro/kWh (\u20ac)"
+    },
+    "full_tank": {
+      "type": "boolean",
+      "title": "Encheu o dep\u00f3sito?",
+      "default": true
+    },
+    "tank_percentage": {
+      "type": "number",
+      "title": "% do dep\u00f3sito abastecido"
+    },
+    "car_avg_consumption": {
+      "type": "number",
+      "title": "M\u00e9dia do Carro (L/100km ou kWh/100km)"
+    },
+    "location": {
+      "type": "string",
+      "title": "Local"
+    },
+    "description": {
+      "type": "string",
+      "title": "Descri\u00e7\u00e3o"
+    },
+    "receipt_url": {
+      "type": "string",
+      "title": "Comprovativo",
+      "format": "file_url"
+    },
+    "maintenance_type": {
+      "type": "string",
+      "title": "Tipo de Manuten\u00e7\u00e3o",
+      "enum": [
+        "Corretiva",
+        "Preventiva"
+      ]
+    },
+    "owner_id": {
+      "type": "string",
+      "title": "Owner ID (automatismos)"
+    }
+  },
+  "required": [
+    "vehicle_id",
+    "category",
+    "sub_category",
+    "amount",
+    "date"
+  ],
+  "rls": {
+    "create": {
+      "created_by_id": "{{user.id}}"
+    },
+    "read": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "data.owner_id": "{{user.id}}"
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "data.owner_id": "{{user.id}}"
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "data.owner_id": "{{user.id}}"
+        }
+      ]
+    }
+  }
+}

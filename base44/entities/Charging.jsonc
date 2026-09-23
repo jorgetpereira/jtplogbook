@@ -1,0 +1,95 @@
+{
+  "name": "Charging",
+  "type": "object",
+  "properties": {
+    "vehicle_id": {
+      "type": "string",
+      "title": "Ve\u00edculo",
+      "relatedEntity": "Vehicle"
+    },
+    "start_datetime": {
+      "type": "string",
+      "format": "date-time",
+      "title": "Data/Hora In\u00edcio"
+    },
+    "end_datetime": {
+      "type": "string",
+      "format": "date-time",
+      "title": "Data/Hora Fim"
+    },
+    "duration_minutes": {
+      "type": "number",
+      "title": "Tempo de Carregamento (min)"
+    },
+    "soc_start_pct": {
+      "type": "number",
+      "title": "Percentagem a Carregar (%)"
+    },
+    "kwh_added": {
+      "type": "number",
+      "title": "kWh Adicionados"
+    },
+    "soc_end_pct": {
+      "type": "number",
+      "title": "Percentagem Indicada (%)"
+    },
+    "kwh_end": {
+      "type": "number",
+      "title": "kWh (fim)"
+    },
+    "range_km": {
+      "type": "number",
+      "title": "Autonomia (km)"
+    },
+    "location_type": {
+      "type": "string",
+      "title": "Local",
+      "enum": [
+        "Casa",
+        "Fora"
+      ]
+    },
+    "location_name": {
+      "type": "string",
+      "title": "Nome do Local"
+    },
+    "odometer": {
+      "type": "number",
+      "title": "Od\u00f3metro (km)"
+    },
+    "price_per_kwh": {
+      "type": "number",
+      "title": "Pre\u00e7o kWh (\u20ac)"
+    },
+    "total_cost": {
+      "type": "number",
+      "title": "Custo Total (\u20ac)"
+    },
+    "car_avg_consumption": {
+      "type": "number",
+      "title": "M\u00e9dia do Carro (kWh/100km)"
+    },
+    "notes": {
+      "type": "string",
+      "title": "Notas"
+    }
+  },
+  "required": [
+    "vehicle_id",
+    "start_datetime"
+  ],
+  "rls": {
+    "create": {
+      "created_by_id": "{{user.id}}"
+    },
+    "read": {
+      "created_by_id": "{{user.id}}"
+    },
+    "update": {
+      "created_by_id": "{{user.id}}"
+    },
+    "delete": {
+      "created_by_id": "{{user.id}}"
+    }
+  }
+}

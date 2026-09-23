@@ -1,0 +1,130 @@
+{
+  "name": "Vehicle",
+  "type": "object",
+  "properties": {
+    "brand": {
+      "type": "string",
+      "title": "Marca"
+    },
+    "model": {
+      "type": "string",
+      "title": "Modelo"
+    },
+    "year": {
+      "type": "number",
+      "title": "Ano"
+    },
+    "license_plate": {
+      "type": "string",
+      "title": "Matr\u00edcula"
+    },
+    "registration_date": {
+      "type": "string",
+      "format": "date",
+      "title": "Data de Matr\u00edcula"
+    },
+    "fuel_type": {
+      "type": "string",
+      "title": "Tipo de Combust\u00edvel",
+      "enum": [
+        "Gas\u00f3leo",
+        "Gasolina",
+        "El\u00e9trico",
+        "H\u00edbrido",
+        "H\u00edbrido EREV",
+        "GPL"
+      ]
+    },
+    "color": {
+      "type": "string",
+      "title": "Cor"
+    },
+    "mileage": {
+      "type": "number",
+      "title": "Quilometragem (km)"
+    },
+    "tank_size": {
+      "type": "number",
+      "title": "Tamanho do Dep\u00f3sito (L)"
+    },
+    "fuel_reserve_liters": {
+      "type": "number",
+      "title": "Reserva de Combust\u00edvel (L)",
+      "default": 5
+    },
+    "fuel_range": {
+      "type": "number",
+      "title": "Autonomia Prevista (km)"
+    },
+    "advertised_consumption": {
+      "type": "number",
+      "title": "M\u00e9dia Anunciada (L/100km ou kWh/100km)"
+    },
+    "advertised_consumption_electric": {
+      "type": "number",
+      "title": "M\u00e9dia Anunciada El\u00e9trica (kWh/100km)"
+    },
+    "battery_capacity": {
+      "type": "number",
+      "title": "Capacidade da Bateria (kWh)"
+    },
+    "electric_range": {
+      "type": "number",
+      "title": "Autonomia El\u00e9trica (km)"
+    },
+    "battery_reserve_pct": {
+      "type": "number",
+      "title": "Reserva de Bateria Preservada (%)",
+      "default": 0,
+      "minimum": 0,
+      "maximum": 50
+    },
+    "loan_amount": {
+      "type": "number",
+      "title": "Valor Total do Empr\u00e9stimo/Cr\u00e9dito (\u20ac)"
+    },
+    "image_url": {
+      "type": "string",
+      "title": "Foto do Ve\u00edculo",
+      "format": "file_url"
+    },
+    "notes": {
+      "type": "string",
+      "title": "Notas"
+    },
+    "last_maintenance_date": {
+      "type": "string",
+      "format": "date",
+      "title": "Data da \u00daltima Revis\u00e3o"
+    },
+    "last_maintenance_km": {
+      "type": "number",
+      "title": "km da \u00daltima Revis\u00e3o"
+    },
+    "is_active": {
+      "type": "boolean",
+      "title": "Ativo",
+      "default": true
+    }
+  },
+  "required": [
+    "brand",
+    "model",
+    "license_plate",
+    "fuel_type"
+  ],
+  "rls": {
+    "create": {
+      "created_by": "{{user.email}}"
+    },
+    "read": {
+      "created_by": "{{user.email}}"
+    },
+    "update": {
+      "created_by": "{{user.email}}"
+    },
+    "delete": {
+      "created_by": "{{user.email}}"
+    }
+  }
+}
