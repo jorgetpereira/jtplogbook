@@ -20,6 +20,7 @@ export default function BackupBanner() {
   const [busy, setBusy] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [endpoint, setEndpoint] = useState(() => getBackupSettings().endpoint);
+  const [intervalDays, setIntervalDays] = useState(() => getBackupSettings().intervalDays);
   const [isOnline, setIsOnline] = useState(navigator.onLine);
 
   const refresh = useCallback(() => setState(getBackupState()), []);
@@ -37,9 +38,23 @@ export default function BackupBanner() {
     };
   }, [refresh]);
 
-  // Tenta a cópia automática ao abrir a app.
+  // Tenta a cópia automática nos três momentos em que a app está viva:
+  // ao abrir, ao voltar a ela, e quando a rede regressa.
   useEffect(() => {
-    runAutoBackup().then(refresh);
+    const attempt = () => runAutoBackup().then(refresh);
+
+    attempt();
+
+    const onVisible = () => {
+      if (document.visibilityState === 'visible') attempt();
+    };
+
+    document.addEventListener('visibilitychange', onVisible);
+    window.addEventListener('online', attempt);
+    return () => {
+      document.removeEventListener('visibilitychange', onVisible);
+      window.removeEventListener('online', attempt);
+    };
   }, [refresh]);
 
   const handleSave = async () => {
@@ -56,7 +71,7 @@ export default function BackupBanner() {
   };
 
   const handleSaveEndpoint = async () => {
-    saveBackupSettings({ endpoint: endpoint.trim() });
+    saveBackupSettings({ endpoint: endpoint.trim(), intervalDays: Number(intervalDays) });
     setShowSettings(false);
     toast.success(endpoint.trim() ? "Destino guardado" : "Destino removido");
     if (endpoint.trim()) {
@@ -147,6 +162,20 @@ export default function BackupBanner() {
           <p className="text-xs text-muted-foreground">
             Endereço do Apps Script no teu Google Drive. Deixa vazio para guardares as cópias só à mão.
           </p>
+          <div className="flex items-center gap-2">
+            <label className="text-xs text-muted-foreground shrink-0">Copiar</label>
+            <select
+              value={intervalDays}
+              onChange={(e) => setIntervalDays(e.target.value)}
+              className="flex-1 min-w-0 rounded-xl border border-input bg-background px-3 py-2 text-xs"
+            >
+              <option value={0}>Sempre que abro a app</option>
+              <option value={1}>Uma vez por dia</option>
+              <option value={2}>De dois em dois dias</option>
+              <option value={7}>Uma vez por semana</option>
+            </select>
+          </div>
+
           <div className="flex gap-2">
             <input
               type="url"

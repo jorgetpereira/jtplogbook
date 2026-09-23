@@ -53,8 +53,15 @@ export function daysSinceBackup() {
   return (Date.now() - new Date(state.at).getTime()) / 86400000;
 }
 
+// Intervalo 0 significa "sempre que abro a app". Mesmo assim guarda-se uma
+// folga de dez minutos, para não enviar uma cópia de cada vez que trocas de
+// separador e voltas.
+const MIN_GAP_DAYS = 10 / 1440;
+
 export function isBackupDue() {
-  return daysSinceBackup() >= getBackupSettings().intervalDays;
+  const { intervalDays } = getBackupSettings();
+  const gap = Math.max(Number(intervalDays) || 0, MIN_GAP_DAYS);
+  return daysSinceBackup() >= gap;
 }
 
 // ---------------------------------------------------------------------------
