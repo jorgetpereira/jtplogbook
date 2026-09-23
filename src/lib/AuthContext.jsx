@@ -1,167 +1,52 @@
-import React, { createContext, useState, useContext, useEffect } from 'react';
+import React, { createContext, useState, useContext, useEffect, useCallback } from 'react';
 import { base44 } from '@/api/base44Client';
-import { appParams } from '@/lib/app-params';
-import { createAxiosClient } from '@base44/sdk/dist/utils/axios-client';
+
+// ---------------------------------------------------------------------------
+// Versão local: não há contas, não há login, não há chamada nenhuma à rede.
+// O "utilizador" é apenas um perfil guardado no aparelho, usado para o nome
+// e para as preferências. O contexto mantém a mesma forma de antes para que
+// o App.jsx e o ProtectedRoute continuem a funcionar sem alterações.
+// ---------------------------------------------------------------------------
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoadingAuth, setIsLoadingAuth] = useState(true);
-  const [isLoadingPublicSettings, setIsLoadingPublicSettings] = useState(true);
-  const [authError, setAuthError] = useState(null);
-  const [appPublicSettings, setAppPublicSettings] = useState(null); // Contains only { id, public_settings }
+  const [authChecked, setAuthChecked] = useState(false);
 
-  useEffect(() => {
-    checkAppState();
+  const checkUserAuth = useCallback(async () => {
+    try {
+      const localUser = await base44.auth.me();
+      setUser(localUser);
+    } catch {
+      // Mesmo que o perfil falhe, a app abre à mesma: não há nada a proteger.
+      setUser(null);
+    } finally {
+      setIsLoadingAuth(false);
+      setAuthChecked(true);
+    }
   }, []);
 
-  const checkAppState = async () => {
-    try {
-      setIsLoadingPublicSettings(true);
-      setAuthError(null);
-      
-      // First, check app public settings (with token if available)
-      // This will tell us if auth is required, user not registered, etc.
-      const appClient = createAxiosClient({
-        baseURL: `/api/apps/public`,
-        headers: {
-          'X-App-Id': appParams.appId
-        },
-        token: appParams.token, // Include token if available
-        interceptResponses: true
-      });
-      
-      try {
-        const publicSettings = await appClient.get(`/prod/public-settings/by-id/${appParams.appId}`);
-        setAppPublicSettings(publicSettings);
-        
-        // If we got the app public settings successfully, check if user is authenticated
-        if (appParams.token) {
-          await checkUserAuth();
-        } else {
-          setIsLoadingAuth(false);
-          setIsAuthenticated(false);
-        }
-        setIsLoadingPublicSettings(false);
-      } catch (appError) {
-        console.error('App state check failed:', appError);
-        
-        // Handle app-level errors
-        if (appError.status === 403 && appError.data?.extra_data?.reason) {
-          const reason = appError.data.extra_data.reason;
-          if (reason === 'auth_required') {
-            setAuthError({
-              type: 'auth_required',
-              message: 'Authentication required'
-            });
-          } else if (reason === 'user_not_registered') {
-            setAuthError({
-              type: 'user_not_registered',
-              message: 'User not registered for this app'
-            });
-          } else {
-            setAuthError({
-              type: reason,
-              message: appError.message
-            });
-          }
-        } else if (!appError.status || appError.status === 0) {
-          // Network error (offline) — don't block the app, proceed with cached user
-          const cachedUser = localStorage.getItem('logbook_cached_user');
-          if (cachedUser) {
-            try { setUser(JSON.parse(cachedUser)); setIsAuthenticated(true); } catch {}
-          }
-          setIsLoadingPublicSettings(false);
-          setIsLoadingAuth(false);
-          return;
-        } else {
-          setAuthError({
-            type: 'unknown',
-            message: appError.message || 'Failed to load app'
-          });
-        }
-        setIsLoadingPublicSettings(false);
-        setIsLoadingAuth(false);
-      }
-    } catch (error) {
-      console.error('Unexpected error:', error);
-      setAuthError({
-        type: 'unknown',
-        message: error.message || 'An unexpected error occurred'
-      });
-      setIsLoadingPublicSettings(false);
-      setIsLoadingAuth(false);
-    }
-  };
+  useEffect(() => {
+    checkUserAuth();
+  }, [checkUserAuth]);
 
-  const checkUserAuth = async () => {
-    try {
-      // Now check if the user is authenticated
-      setIsLoadingAuth(true);
-      const currentUser = await base44.auth.me();
-      setUser(currentUser);
-      setIsAuthenticated(true);
-      localStorage.setItem('logbook_cached_user', JSON.stringify(currentUser));
-      setIsLoadingAuth(false);
-    } catch (error) {
-      console.error('User auth check failed:', error);
-      setIsLoadingAuth(false);
-
-      // Network error (offline) — restore cached session instead of blocking
-      if (!error.status || error.status === 0) {
-        const cachedUser = localStorage.getItem('logbook_cached_user');
-        if (cachedUser) {
-          try {
-            setUser(JSON.parse(cachedUser));
-            setIsAuthenticated(true);
-            return;
-          } catch {}
-        }
-      }
-
-      setIsAuthenticated(false);
-
-      // If user auth fails, it might be an expired token
-      if (error.status === 401 || error.status === 403) {
-        setAuthError({
-          type: 'auth_required',
-          message: 'Authentication required'
-        });
-      }
-    }
-  };
-
-  const logout = (shouldRedirect = true) => {
-    setUser(null);
-    setIsAuthenticated(false);
-    
-    if (shouldRedirect) {
-      // Use the SDK's logout method which handles token cleanup and redirect
-      base44.auth.logout(window.location.href);
-    } else {
-      // Just remove the token without redirect
-      base44.auth.logout();
-    }
-  };
-
-  const navigateToLogin = () => {
-    // Use the SDK's redirectToLogin method
-    base44.auth.redirectToLogin(window.location.href);
-  };
+  const noop = () => {};
 
   return (
-    <AuthContext.Provider value={{ 
-      user, 
-      isAuthenticated, 
+    <AuthContext.Provider value={{
+      user,
+      isAuthenticated: true,
       isLoadingAuth,
-      isLoadingPublicSettings,
-      authError,
-      appPublicSettings,
-      logout,
-      navigateToLogin,
-      checkAppState
+      isLoadingPublicSettings: false,
+      authChecked,
+      authError: null,
+      appPublicSettings: null,
+      checkUserAuth,
+      checkAppState: checkUserAuth,
+      logout: noop,
+      navigateToLogin: noop,
     }}>
       {children}
     </AuthContext.Provider>

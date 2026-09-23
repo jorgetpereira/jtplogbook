@@ -5,20 +5,6 @@
 [build.environment]
   NODE_VERSION = "20"
 
-# ---------------------------------------------------------------------------
-# A app fala com o backend por caminhos relativos (/api/...). Servida a partir
-# do Netlify, esses pedidos batiam aqui e davam 404. Esta regra reencaminha-os
-# para o Base44 do lado do servidor — o browser continua a ver tudo como sendo
-# da mesma origem, o que também evita problemas de CORS.
-#
-# SUBSTITUI o domínio abaixo pelo da tua app no Base44.
-# ---------------------------------------------------------------------------
-[[redirects]]
-  from = "/api/*"
-  to = "https://jtplogbook.base44.app/api/:splat"
-  status = 200
-  force = true
-
 # O service worker tem de ser servido sempre fresco, senão o telemóvel pode
 # ficar preso a uma versão antiga durante horas.
 [[headers]]
@@ -32,7 +18,6 @@
     Cache-Control = "public, max-age=0, must-revalidate"
 
 # Single-page app: qualquer rota devolve o index.html.
-# Tem de ficar em último lugar, depois da regra do /api.
 [[redirects]]
   from = "/*"
   to = "/index.html"
