@@ -20,7 +20,6 @@ import InsuranceForm from "@/components/vehicles/InsuranceForm";
 import VehicleSummary from "../components/dashboard/VehicleSummary";
 import SummaryPanel from "../components/dashboard/SummaryPanel";
 import FuelEstimateBar from "../components/dashboard/FuelEstimateBar";
-import OfflineSyncBanner from "@/components/dashboard/OfflineSyncBanner";
 import { format } from "date-fns";
 import { pt } from "date-fns/locale";
 import { cn } from "@/lib/utils";

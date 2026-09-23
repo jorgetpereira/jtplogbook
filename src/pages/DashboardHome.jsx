@@ -19,7 +19,7 @@ import InsuranceForm from "@/components/vehicles/InsuranceForm";
 import VehicleSummary from "../components/dashboard/VehicleSummary";
 import SummaryPanel from "../components/dashboard/SummaryPanel";
 import FuelEstimateBar from "../components/dashboard/FuelEstimateBar";
-import OfflineSyncBanner from "@/components/dashboard/OfflineSyncBanner";
+import BackupBanner from "@/components/dashboard/BackupBanner";
 import MaintenanceAlerts from "../components/dashboard/MaintenanceAlerts";
 import MonthlyDashboard from "../components/dashboard/MonthlyDashboard";
 import { toast as radixToast } from "@/components/ui/use-toast";
@@ -352,7 +352,7 @@ export default function DashboardHome() {
         )}
 
         {/* Offline / Sync status banner */}
-        <OfflineSyncBanner />
+        <BackupBanner />
 
         {/* Fuel Estimate Bar */}
         {vehicles.length > 0 && expenses.length > 0 && (
