@@ -21,6 +21,7 @@ export default function BackupBanner() {
   const [showSettings, setShowSettings] = useState(false);
   const [endpoint, setEndpoint] = useState(() => getBackupSettings().endpoint);
   const [intervalDays, setIntervalDays] = useState(() => getBackupSettings().intervalDays);
+  const [docsToDrive, setDocsToDrive] = useState(() => getBackupSettings().documentsToDrive !== false);
   const [isOnline, setIsOnline] = useState(navigator.onLine);
 
   const refresh = useCallback(() => setState(getBackupState()), []);
@@ -71,7 +72,11 @@ export default function BackupBanner() {
   };
 
   const handleSaveEndpoint = async () => {
-    saveBackupSettings({ endpoint: endpoint.trim(), intervalDays: Number(intervalDays) });
+    saveBackupSettings({
+      endpoint: endpoint.trim(),
+      intervalDays: Number(intervalDays),
+      documentsToDrive: docsToDrive,
+    });
     setShowSettings(false);
     toast.success(endpoint.trim() ? "Destino guardado" : "Destino removido");
     if (endpoint.trim()) {
@@ -175,6 +180,16 @@ export default function BackupBanner() {
               <option value={7}>Uma vez por semana</option>
             </select>
           </div>
+
+          <label className="flex items-center gap-2 text-xs text-muted-foreground">
+            <input
+              type="checkbox"
+              checked={docsToDrive}
+              onChange={(e) => setDocsToDrive(e.target.checked)}
+              className="rounded border-input"
+            />
+            Guardar comprovativos no Drive em vez do telemóvel
+          </label>
 
           <div className="flex gap-2">
             <input

@@ -4,48 +4,20 @@
 // Os dados vivem no aparelho, por isso a cópia deixou de ser um extra e passou
 // a ser a única rede de segurança. Isto trata de três coisas:
 //   • juntar tudo num JSON igual ao que a página Importar/Exportar produz;
-//   • enviá-lo sozinho para o Google Drive, através de um Apps Script teu;
+//   • enviá-lo sozinho para o Google Drive e escrever a folha de cálculo,
+//     através de um Apps Script teu;
 //   • quando isso não é possível, avisar e deixar guardar com um toque.
 // ---------------------------------------------------------------------------
 
 import { base44 } from '@/api/base44Client';
+import {
+  getBackupSettings,
+  saveBackupSettings,
+  getBackupState,
+  setBackupState,
+} from '@/lib/backupSettings';
 
-const SETTINGS_KEY = 'logbook_backup_settings';
-const STATE_KEY = 'logbook_backup_state';
-
-const DEFAULT_SETTINGS = {
-  endpoint: '',      // endereço do Apps Script (termina em /exec)
-  intervalDays: 2,
-};
-
-export function getBackupSettings() {
-  try {
-    return { ...DEFAULT_SETTINGS, ...JSON.parse(localStorage.getItem(SETTINGS_KEY) || '{}') };
-  } catch {
-    return { ...DEFAULT_SETTINGS };
-  }
-}
-
-export function saveBackupSettings(patch) {
-  const next = { ...getBackupSettings(), ...patch };
-  localStorage.setItem(SETTINGS_KEY, JSON.stringify(next));
-  return next;
-}
-
-// Estado da última cópia: { at, ok, method, error }
-export function getBackupState() {
-  try {
-    return JSON.parse(localStorage.getItem(STATE_KEY) || 'null');
-  } catch {
-    return null;
-  }
-}
-
-function setBackupState(state) {
-  localStorage.setItem(STATE_KEY, JSON.stringify(state));
-  window.dispatchEvent(new Event('logbookBackupChanged'));
-  return state;
-}
+export { getBackupSettings, saveBackupSettings, getBackupState };
 
 export function daysSinceBackup() {
   const state = getBackupState();
@@ -113,7 +85,7 @@ export async function sendToDrive(payload) {
   const res = await fetch(endpoint, {
     method: 'POST',
     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-    body: JSON.stringify({ filename: backupFilename(), data: payload }),
+    body: JSON.stringify({ action: 'both', filename: backupFilename(), data: payload }),
     redirect: 'follow',
   });
 

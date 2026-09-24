@@ -14,6 +14,7 @@ import {
   updateLocalUser,
   storeFile,
 } from './localDb';
+import { driveUploadAvailable, uploadToDrive } from '@/lib/driveFiles';
 
 const entities = {};
 for (const name of ENTITIES) {
@@ -60,7 +61,19 @@ export const base44 = {
 
   integrations: {
     Core: {
-      UploadFile: ({ file }) => storeFile(file),
+      // Com destino configurado e rede, o documento vai para o Drive e o
+      // registo guarda só o endereço. Sem uma coisa ou outra, fica guardado
+      // dentro do próprio registo, como antes — nunca se perde o ficheiro.
+      UploadFile: async ({ file }) => {
+        if (driveUploadAvailable()) {
+          try {
+            return await uploadToDrive(file);
+          } catch {
+            // Cai para o armazenamento local em silêncio.
+          }
+        }
+        return storeFile(file);
+      },
       InvokeLLM: () => Promise.reject(unavailable('Leitura automática de talões')),
     },
   },
