@@ -2,6 +2,19 @@ import { useState, useEffect, useCallback } from 'react';
 import { base44 } from '@/api/base44Client';
 import { flushQueue, getPendingCount } from '@/lib/offlineQueue';
 
+// ---------------------------------------------------------------------------
+// Resto da era em que havia servidor.
+//
+// Nessa altura, gravar sem rede era impossível, e as páginas desviavam a
+// gravação para uma fila em localStorage à espera de melhores dias. Agora a
+// base de dados é local e uma gravação nunca falha — mas as páginas ainda
+// perguntam "estou online?" antes de gravar, e com a resposta errada punham o
+// registo na fila em vez de o guardarem.
+//
+// Daí o isOnline ficar sempre verdadeiro: para a gravação, estamos sempre.
+// A fila mantém-se apenas para esvaziar o que lá tenha ficado preso.
+// ---------------------------------------------------------------------------
+
 const ENTITIES = {
   Expense: base44.entities.Expense,
   Charging: base44.entities.Charging,
@@ -10,7 +23,6 @@ const ENTITIES = {
 };
 
 export function useOfflineSync() {
-  const [isOnline, setIsOnline] = useState(navigator.onLine);
   const [pendingCount, setPendingCount] = useState(getPendingCount());
   const [isSyncing, setIsSyncing] = useState(false);
   const [lastSyncResult, setLastSyncResult] = useState(null);
@@ -19,32 +31,25 @@ export function useOfflineSync() {
     setPendingCount(getPendingCount());
   }, []);
 
+  // Escreve na base local tudo o que tenha ficado na fila antiga.
+  // Já não depende da rede, porque o destino é o próprio aparelho.
   const sync = useCallback(async () => {
-    if (!navigator.onLine || getPendingCount() === 0) return;
+    if (getPendingCount() === 0) return;
     setIsSyncing(true);
     try {
       const result = await flushQueue(ENTITIES);
       setLastSyncResult(result);
       setPendingCount(getPendingCount());
+    } catch {
+      // Se falhar, os registos ficam na fila para a próxima tentativa.
     } finally {
       setIsSyncing(false);
     }
   }, []);
 
   useEffect(() => {
-    const onOnline = () => {
-      setIsOnline(true);
-      sync();
-    };
-    const onOffline = () => setIsOnline(false);
-
-    window.addEventListener('online', onOnline);
-    window.addEventListener('offline', onOffline);
-    return () => {
-      window.removeEventListener('online', onOnline);
-      window.removeEventListener('offline', onOffline);
-    };
+    sync();
   }, [sync]);
 
-  return { isOnline, pendingCount, isSyncing, lastSyncResult, refresh, sync };
+  return { isOnline: true, pendingCount, isSyncing, lastSyncResult, refresh, sync };
 }

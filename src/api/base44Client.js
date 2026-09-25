@@ -79,7 +79,15 @@ export const base44 = {
   },
 
   functions: {
-    invoke: (name) => Promise.reject(unavailable(UNAVAILABLE[name] || name)),
+    // Resolve em vez de rejeitar: as funcionalidades que corriam no servidor
+    // simplesmente não devolvem dados, e a página segue o seu caminho. A
+    // rejeição fazia páginas inteiras rebentar por causa de um extra.
+    invoke: (name) =>
+      Promise.resolve({
+        data: null,
+        unavailable: true,
+        reason: UNAVAILABLE[name] || name,
+      }),
   },
 };
 
