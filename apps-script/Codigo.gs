@@ -113,7 +113,8 @@ function doGet() {
 
 function saveBackup_(body) {
   var name = body.filename || ('logbook-' + new Date().toISOString() + '.json');
-  var folder = folderByName_(BACKUP_FOLDER);
+  // Cada app pode pedir a sua própria pasta; sem indicação, vai para a do logbook.
+  var folder = folderByName_(body.folder || BACKUP_FOLDER);
   folder.createFile(name, JSON.stringify(body.data || body, null, 2), MimeType.PLAIN_TEXT);
   prune_(folder, KEEP_BACKUPS);
   return { ok: true, file: name };
