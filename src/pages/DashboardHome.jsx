@@ -3,6 +3,7 @@ import { usePullToRefresh } from "../hooks/usePullToRefresh";
 import { base44 } from "@/api/base44Client";
 import { enqueue } from "@/lib/offlineQueue";
 import { saveCache, loadCache } from "@/lib/dataCache";
+import { criarPagamentosEmFalta } from "@/lib/creditoMensal";
 import { useOfflineSync } from "@/hooks/useOfflineSync";
 import { maybeCreateAutoNotification } from "@/lib/autoNotifications";
 import { syncVehicleMileage } from "@/lib/vehicleMileage";
@@ -23,6 +24,7 @@ import BackupBanner from "@/components/dashboard/BackupBanner";
 import MaintenanceAlerts from "../components/dashboard/MaintenanceAlerts";
 import MonthlyDashboard from "../components/dashboard/MonthlyDashboard";
 import { toast as radixToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 
 export default function DashboardHome() {
   const [expenses, setExpenses] = useState([]);
@@ -53,6 +55,21 @@ export default function DashboardHome() {
 
   const load = async () => {
     try {
+      // Cria os pagamentos de crédito que faltarem antes de ler os dados,
+      // para que apareçam logo na lista em vez de só na próxima abertura.
+      try {
+        const novos = await criarPagamentosEmFalta();
+        if (novos.length) {
+          toast.success(
+            novos.length === 1
+              ? `Pagamento de crédito de ${novos[0].data} criado`
+              : `${novos.length} pagamentos de crédito em falta criados`
+          );
+        }
+      } catch (err) {
+        console.warn("Pagamento mensal de crédito falhou:", err);
+      }
+
       const [e, v, c, s, n] = await Promise.all([
         base44.entities.Expense.list("-date", 500),
         base44.entities.Vehicle.list(),
