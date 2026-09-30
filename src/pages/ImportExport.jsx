@@ -8,6 +8,7 @@ import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
 import JSZip from "jszip";
 import GoogleSheetsBackup from "@/components/GoogleSheetsBackup";
+import ExportarParaBase44 from "@/components/importexport/ExportarParaBase44";
 
 const TEMPLATES = {
   Vehicle: {
@@ -440,6 +441,8 @@ export default function ImportExport() {
           </Button>
         </div>
       )}
+
+      <ExportarParaBase44 />
 
       {/* Full Backup */}
       <div className="space-y-4">
