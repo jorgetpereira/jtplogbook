@@ -34,7 +34,7 @@ Open [Base44.com](http://Base44.com) and click on Publish.
 
 **Docs & Support**
 
-30-09-2026 16:50
+30-09-2026 17:12
 
 Documentation: [https://docs.base44.com/Integrations/Using-GitHub](https://docs.base44.com/Integrations/Using-GitHub)
 
