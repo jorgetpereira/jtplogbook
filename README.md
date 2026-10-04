@@ -34,6 +34,9 @@ Open [Base44.com](http://Base44.com) and click on Publish.
 
 **Docs & Support**
 
+
+
+e6d2db2aa84127616644a54d04ff9a5f1cd32de
 Documentation: [https://docs.base44.com/Integrations/Using-GitHub](https://docs.base44.com/Integrations/Using-GitHub)
 
 Support: [https://app.base44.com/support](https://app.base44.com/support)
