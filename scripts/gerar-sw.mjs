@@ -86,21 +86,40 @@ self.addEventListener('fetch', (event) => {
   // Outros domínios seguem sem interferência.
   if (url.origin !== self.location.origin) return;
 
-  // Navegações: rede primeiro, casca em cache como rede de segurança.
+  // Navegações: tenta a rede, mas com paciência curta.
+  //
+  // Sem rede, o pedido falha logo e servimos a cópia local. O caso mau é a
+  // rede meia-ligada — telemóvel agarrado à antena mas sem dados a passar —
+  // em que o pedido não falha, fica pendurado, e a app fica em branco à
+  // espera dele. Daí o limite de dois segundos: passado esse tempo servimos
+  // o que temos guardado e deixamos a rede continuar em segundo plano.
   if (req.mode === 'navigate') {
-    event.respondWith(
-      fetch(req)
-        .then((res) => {
-          if (res && res.status === 200) {
-            const clone = res.clone();
-            caches.open(CACHE_VERSION).then((cache) => cache.put('/index.html', clone));
-          }
-          return res;
-        })
-        .catch(() =>
-          caches.match('/index.html').then((cached) => cached || caches.match('/'))
-        )
-    );
+    event.respondWith((async () => {
+      const daRede = fetch(req).then((res) => {
+        if (res && res.status === 200) {
+          const clone = res.clone();
+          caches.open(CACHE_VERSION).then((cache) => cache.put('/index.html', clone));
+        }
+        return res;
+      });
+
+      const daCache = caches.match('/index.html').then((c) => c || caches.match('/'));
+
+      const limite = new Promise((resolve) => setTimeout(() => resolve('demorou'), 2000));
+
+      try {
+        const corrida = await Promise.race([daRede, limite]);
+        if (corrida !== 'demorou') return corrida;
+      } catch {
+        // A rede falhou: segue para a cópia local.
+      }
+
+      const guardada = await daCache;
+      if (guardada) return guardada;
+
+      // Sem cópia local não há alternativa senão esperar pela rede.
+      return daRede;
+    })());
     return;
   }
 
